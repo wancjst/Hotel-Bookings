@@ -1,7 +1,3 @@
-
-# Default ignored files
-/workspace.xml
-
 # maven ignore
 target/
 *.jar
