@@ -26,16 +26,16 @@ public class HotelAggregate implements Serializable {
 	/**
 	 * 剩余房间<type,number> 房间类型: 1. 大床房 2. 标准间 3. 情侣套房 4. 总统套房
 	 */
-	private Map<Integer, Integer> restRoom = new HashMap<>();
+	private Map<String, Integer> restRoom = new HashMap<>();
 
 	/**
 	 * 假定各类房间剩余10间
 	 */
 	public HotelAggregate() {
-		restRoom.put(1, 10);
-		restRoom.put(2, 10);
-		restRoom.put(3, 10);
-		restRoom.put(4, 10);
+		restRoom.put("1", 10);
+		restRoom.put("2", 10);
+		restRoom.put("3", 10);
+		restRoom.put("4", 10);
 	}
 
 	/**
@@ -43,10 +43,13 @@ public class HotelAggregate implements Serializable {
 	 * @param cmd
 	 * @return
 	 */
-	@QueryHandler(aggregateRootId = "hotelCode")
+	@CommandHandler(aggregateRootId = "hotelCode")
 	public ActReturn act(HotelQueryCmd cmd) {
 		return ActReturn.builder().retCode(RetCode.SUCCESS).event(new HotelQueryEvent(cmd.getHotelCode(), restRoom))
 				.build();
+	}
+
+	public void on(HotelQueryEvent event) {
 	}
 
 	/**

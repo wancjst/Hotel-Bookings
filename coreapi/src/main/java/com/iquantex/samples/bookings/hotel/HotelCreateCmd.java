@@ -16,7 +16,7 @@ public class HotelCreateCmd implements Serializable {
 
 	private String hotelCode;
 
-	private int restType;
+	private String restType;
 
 	private String subNumber;
 

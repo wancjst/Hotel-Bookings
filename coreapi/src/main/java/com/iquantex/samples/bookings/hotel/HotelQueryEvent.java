@@ -18,6 +18,6 @@ public class HotelQueryEvent implements Serializable {
 
 	private String hotelCode;
 
-	private Map<Integer, Integer> restRoom;
+	private Map<String, Integer> restRoom;
 
 }

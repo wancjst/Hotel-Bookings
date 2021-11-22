@@ -8,6 +8,7 @@ import com.iquantex.phoenix.eventpublish.core.EventHandler;
 import com.iquantex.phoenix.eventpublish.deserializer.DefaultMessageDeserializer;
 import com.iquantex.phoenix.server.eventstore.EventStoreRecord;
 import com.iquantex.samples.bookings.hotel.HotelCreateEvent;
+import com.iquantex.samples.bookings.utils.ConvertUtil;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,7 @@ public class PopPublishHandler implements EventHandler<Phoenix.Message, Phoenix.
 
 	/** 流行度排行内容 */
 	@Getter
-	private Map<Integer, Integer> popList = new HashMap<>();
+	private Map<String, Integer> popList = new HashMap<>();
 
 	/** 使用提供的默认反序列化器，反序列化MQ中的字节数组，得到以Message封装的领域事件 */
 	private EventDeserializer<byte[], Message> deserializer = new DefaultMessageDeserializer();
@@ -44,7 +45,7 @@ public class PopPublishHandler implements EventHandler<Phoenix.Message, Phoenix.
 		while (iterator.hasNext()) {
 			Message message = deserializer.deserialize(iterator.next().getContent().toByteArray());
 			if (message.getPayload() instanceof HotelCreateEvent) {
-				int restType = ((HotelCreateEvent) message.getPayload()).getRestType();
+				String restType = ((HotelCreateEvent) message.getPayload()).getRestType();
 				if (popList.containsKey(restType)) {
 					popList.put(restType, popList.get(restType) + 1);
 				}

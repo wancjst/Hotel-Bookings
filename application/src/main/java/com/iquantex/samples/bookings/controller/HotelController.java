@@ -9,6 +9,7 @@ import com.iquantex.samples.bookings.hotel.HotelCreateEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateFailEvent;
 import com.iquantex.samples.bookings.hotel.HotelQueryCmd;
 import com.iquantex.samples.bookings.hotel.HotelQueryEvent;
+import com.iquantex.samples.bookings.listener.PopPublishHandler;
 import com.iquantex.samples.bookings.utils.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,8 +34,11 @@ public class HotelController {
 	@Autowired
 	private PhoenixClient client;
 
+	@Autowired
+	private PopPublishHandler popPublishHandler;
+
 	@PutMapping("/bookings/{hotelCode}/{roomType}")
-	public String bookings(@PathVariable String hotelCode, @PathVariable int roomType) {
+	public String bookings(@PathVariable String hotelCode, @PathVariable String roomType) {
 		// 生成预约号: roomType@UUID
 		String subNumber = roomType + "@" + UUID.randomUUID().toString();
 		HotelCreateCmd cmd = new HotelCreateCmd(hotelCode, roomType, subNumber);
@@ -61,6 +65,16 @@ public class HotelController {
 		}
 		catch (InterruptedException | ExecutionException | TimeoutException | JsonProcessingException e) {
 			return "rpc error: " + e.getMessage();
+		}
+	}
+
+	@GetMapping("/queryPop")
+	public String queryRestRoom() {
+		try {
+			return new ObjectMapper().writeValueAsString(ConvertUtil.Map2Map(popPublishHandler.getPopList()));
+		}
+		catch (JsonProcessingException e) {
+			return "query fail: " + e.getMessage();
 		}
 	}
 

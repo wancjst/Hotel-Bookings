@@ -8,19 +8,19 @@ import java.util.Map;
  */
 public class ConvertUtil {
 
-	public static Map<String, Integer> Map2Map(Map<Integer, Integer> map) {
+	public static Map<String, Integer> Map2Map(Map<String, Integer> map) {
 		Map<String, Integer> linkedHashMap = new LinkedHashMap<>();
 		map.forEach((key, value) -> {
-			if (key == 1) {
+			if ("1".equals(key)) {
 				linkedHashMap.put("大床房", value);
 			}
-			else if (key == 2) {
+			else if ("2".equals(key)) {
 				linkedHashMap.put("标准间", value);
 			}
-			else if (key == 3) {
+			else if ("3".equals(key)) {
 				linkedHashMap.put("情侣套房", value);
 			}
-			else if (key == 4) {
+			else if ("4".equals(key)) {
 				linkedHashMap.put("总统套房", value);
 			}
 		});
