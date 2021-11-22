@@ -4,6 +4,16 @@ spring:
 
 quantex:
   phoenix:
+    event-publish:
+      batch-size: 64
+      buffer-queue-size: 64
+      from-begin: true
+      state-table-name: event_publish_state
+      event-task:
+        enabled: true
+        topic: hotel-bookings
+      monitor-task:
+        es-server: 127.0.0.1:9200
     client:
       name: ${spring.application.name}-client   # 服务名称
       mq:

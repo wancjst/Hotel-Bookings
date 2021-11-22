@@ -11,12 +11,13 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 public class HotelCreateEvent implements Serializable {
-    private static final long serialVersionUID = -2347396853431433998L;
 
-    private String hotelCode;
+	private static final long serialVersionUID = -2347396853431433998L;
 
-    private int restType;
+	private String hotelCode;
 
-    private String subNumber;
+	private int restType;
+
+	private String subNumber;
 
 }

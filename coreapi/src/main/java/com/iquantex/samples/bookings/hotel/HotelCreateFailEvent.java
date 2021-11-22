@@ -12,8 +12,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class HotelCreateFailEvent implements Serializable {
 
-    private static final long serialVersionUID = -4501845839053489536L;
+	private static final long serialVersionUID = -4501845839053489536L;
 
-    private String msg;
+	private String msg;
 
 }

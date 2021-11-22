@@ -12,11 +12,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class HotelCreateCmd implements Serializable {
 
-    private static final long serialVersionUID = 719772692097810576L;
+	private static final long serialVersionUID = 719772692097810576L;
 
-    private String hotelCode;
+	private String hotelCode;
 
-    private int restType;
+	private int restType;
 
-    private String subNumber;
+	private String subNumber;
+
 }
