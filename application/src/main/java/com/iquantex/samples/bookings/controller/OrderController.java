@@ -26,26 +26,32 @@ import java.util.concurrent.TimeoutException;
 @RequestMapping("order")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+	@Autowired
+	private OrderService orderService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = new ObjectMapper();
 
-    @GetMapping("/queryAll")
-    public String queryAll() {
-        try {
-            return objectMapper.writeValueAsString(orderService.queryAll());
-        } catch (JsonProcessingException e) {
-            return "order query fail";
-        }
-    }
+	@GetMapping("/queryAll")
+	public String queryAll() {
+		try {
+			return objectMapper.writeValueAsString(orderService.queryAll());
+		}
+		catch (JsonProcessingException e) {
+			return "order query fail";
+		}
+	}
 
-    @GetMapping("/query/{orderCode}")
-    public String queryRestRoom(@PathVariable String orderCode) {
-        try {
-            return objectMapper.writeValueAsString(orderService.query2Order(orderCode));
-        } catch (JsonProcessingException e) {
-            return "order query fail";
-        }
-    }
+	@GetMapping("/query/{orderCode}")
+	public String queryRestRoom(@PathVariable String orderCode) {
+		try {
+			if (orderService.query2Order(orderCode) != null) {
+				return objectMapper.writeValueAsString(orderService.query2Order(orderCode));
+			}
+			return "Please check your order number";
+		}
+		catch (JsonProcessingException e) {
+			return "order query fail";
+		}
+	}
+
 }

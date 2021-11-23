@@ -14,10 +14,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Order {
 
-    private String orderNum;
+	private String orderNum;
 
-    private String hotelCode;
+	private String hotelCode;
 
-    private String roomType;
+	private String roomType;
 
 }

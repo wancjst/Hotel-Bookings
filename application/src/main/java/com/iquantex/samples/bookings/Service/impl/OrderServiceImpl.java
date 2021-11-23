@@ -5,8 +5,9 @@ import com.iquantex.samples.bookings.order.Order;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -15,27 +16,27 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Getter
-    private static List<Order> orderList = new ArrayList<>();
+	@Getter
+	private static Set<Order> orderSet = new HashSet<>();
 
-    @Override
-    public List<Order> queryAll() {
-        return orderList;
-    }
+	@Override
+	public Set<Order> queryAll() {
+		return orderSet;
+	}
 
-    @Override
-    public Order query2Order(String orderNum) {
-        AtomicReference<Order> order = null;
-        orderList.forEach(v -> {
-            if (v.getOrderNum().equals(orderNum)) {
-                order.set(v);
-            }
-        });
-        return order.get();
-    }
+	@Override
+	public Order query2Order(String orderNum) {
+		for (Order order : orderSet) {
+			if (order.getOrderNum().equals(orderNum)) {
+				return order;
+			}
+		}
+		return null;
+	}
 
-    @Override
-    public boolean cancelOrder(String orderNum) {
-        return false;
-    }
+	@Override
+	public boolean cancelOrder(String orderNum) {
+		return false;
+	}
+
 }
