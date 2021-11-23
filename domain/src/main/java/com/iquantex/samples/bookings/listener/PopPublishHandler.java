@@ -7,6 +7,7 @@ import com.iquantex.phoenix.eventpublish.core.EventDeserializer;
 import com.iquantex.phoenix.eventpublish.core.EventHandler;
 import com.iquantex.phoenix.eventpublish.deserializer.DefaultMessageDeserializer;
 import com.iquantex.phoenix.server.eventstore.EventStoreRecord;
+import com.iquantex.samples.bookings.hotel.HotelCancelEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateEvent;
 import com.iquantex.samples.bookings.utils.ConvertUtil;
 import lombok.Getter;
@@ -45,13 +46,17 @@ public class PopPublishHandler implements EventHandler<Phoenix.Message, Phoenix.
 		while (iterator.hasNext()) {
 			Message message = deserializer.deserialize(iterator.next().getContent().toByteArray());
 			if (message.getPayload() instanceof HotelCreateEvent) {
-				String restType = ((HotelCreateEvent) message.getPayload()).getRestType();
-				if (popList.containsKey(restType)) {
-					popList.put(restType, popList.get(restType) + 1);
+				String roomType = ((HotelCreateEvent) message.getPayload()).getRestType();
+				if (popList.containsKey(roomType)) {
+					popList.put(roomType, popList.get(roomType) + 1);
 				}
 				else {
-					popList.put(restType, 1);
+					popList.put(roomType, 1);
 				}
+				this.popList = sortMap(popList);
+			}else if (message.getPayload() instanceof HotelCancelEvent) {
+				String roomType = ((HotelCancelEvent) message.getPayload()).getSubNumber().split("@")[0];
+				popList.put(roomType, popList.get(roomType) - 1);
 				this.popList = sortMap(popList);
 			}
 		}

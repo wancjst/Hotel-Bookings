@@ -5,6 +5,9 @@ import com.iquantex.phoenix.server.aggregate.ActReturn;
 import com.iquantex.phoenix.server.aggregate.CommandHandler;
 import com.iquantex.phoenix.server.aggregate.EntityAggregateAnnotation;
 import com.iquantex.phoenix.server.aggregate.QueryHandler;
+import com.iquantex.samples.bookings.hotel.HotelCancelCmd;
+import com.iquantex.samples.bookings.hotel.HotelCancelEvent;
+import com.iquantex.samples.bookings.hotel.HotelCancelFailEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateCmd;
 import com.iquantex.samples.bookings.hotel.HotelCreateEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateFailEvent;
@@ -12,7 +15,9 @@ import com.iquantex.samples.bookings.hotel.HotelQueryCmd;
 import com.iquantex.samples.bookings.hotel.HotelQueryEvent;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +27,11 @@ import java.util.Map;
 public class HotelAggregate implements Serializable {
 
 	private static final long serialVersionUID = -4051924255577694209L;
+
+	/**
+	 * 已被预订的房间的预定号
+	 */
+	private List<String> bookedRoom = new ArrayList<>();
 
 	/**
 	 * 剩余房间<type,number> 房间类型: 1. 大床房 2. 标准间 3. 情侣套房 4. 总统套房
@@ -68,10 +78,32 @@ public class HotelAggregate implements Serializable {
 	}
 
 	public void on(HotelCreateEvent event) {
+		this.bookedRoom.add(event.getSubNumber());
 		this.restRoom.put(event.getRestType(), restRoom.get(event.getRestType()) - 1);
 	}
 
 	public void on(HotelCreateFailEvent event) {
 	}
 
+    /**
+     * 取消预约
+     *
+     * @param cmd
+     * @return
+     */
+    @CommandHandler(aggregateRootId = "hotelCode")
+    public ActReturn act(HotelCancelCmd cmd){
+		if (!bookedRoom.contains(cmd.getSubNumber())) {
+			return ActReturn.builder().retCode(RetCode.FAIL).event(new HotelCancelFailEvent("Please check your order number")).build();
+		}
+        return ActReturn.builder().retCode(RetCode.SUCCESS).event(new HotelCancelEvent(cmd.getHotelCode(),cmd.getSubNumber())).build();
+    }
+
+    public void on(HotelCancelEvent event){
+    	bookedRoom.removeIf(v->v.contains(event.getSubNumber()));
+		String s = event.getSubNumber().split("@")[0];
+		if (restRoom.containsKey(s)) {
+			restRoom.put(s,restRoom.get(s) + 1);
+		}
+	}
 }

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iquantex.phoenix.client.PhoenixClient;
 import com.iquantex.phoenix.client.RpcResult;
+import com.iquantex.samples.bookings.hotel.HotelCancelCmd;
+import com.iquantex.samples.bookings.hotel.HotelCancelEvent;
+import com.iquantex.samples.bookings.hotel.HotelCancelFailEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateCmd;
 import com.iquantex.samples.bookings.hotel.HotelCreateEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateFailEvent;
@@ -78,4 +81,19 @@ public class HotelController {
 		}
 	}
 
+    @PutMapping("/cancel/{hotelCode}/{subNumber}")
+    public String cancel(@PathVariable String hotelCode,
+                         @PathVariable String subNumber){
+        HotelCancelCmd hotelCancelCmd = new HotelCancelCmd(hotelCode, subNumber);
+        Future<RpcResult> future = client.send(hotelCancelCmd, "hotel-bookings", UUID.randomUUID().toString());
+		try {
+			Object data = future.get(10, TimeUnit.SECONDS).getData();
+			if (data instanceof HotelCancelEvent) {
+				return "cancel ok";
+			}
+			return ((HotelCancelFailEvent) data).getMsg();
+        } catch (InterruptedException | ExecutionException| TimeoutException e) {
+            return "rpc error: " + e.getMessage();
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.iquantex.phoenix.core.message.Message;
 import com.iquantex.phoenix.eventpublish.core.EventDeserializer;
 import com.iquantex.phoenix.eventpublish.deserializer.DefaultMessageDeserializer;
 import com.iquantex.samples.bookings.Service.impl.OrderServiceImpl;
+import com.iquantex.samples.bookings.hotel.HotelCancelEvent;
 import com.iquantex.samples.bookings.hotel.HotelCreateEvent;
 import com.iquantex.samples.bookings.order.Order;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +30,19 @@ public class HotelBookingsEventListener {
 	public void receive(byte[] eventBytes) {
 		try {
 			Message message = deserializer.deserialize(eventBytes);
-			if (message.getPayload() instanceof HotelCreateEvent) {
-				HotelCreateEvent event = message.getPayload();
+			Object payload = message.getPayload();
+			if (payload instanceof HotelCreateEvent) {
+				HotelCreateEvent event = (HotelCreateEvent) payload;
 				OrderServiceImpl.getOrderSet()
 						.add(new Order(event.getSubNumber(), event.getHotelCode(), event.getRestType()));
+			} else if(payload instanceof HotelCancelEvent){
+				HotelCancelEvent event = (HotelCancelEvent) payload;
+				OrderServiceImpl.getOrderSet().removeIf(f->{
+					if (f.getOrderNum().equals(event.getSubNumber())) {
+						return true;
+					}
+					return false;
+				});
 			}
 		}
 		catch (Exception e) {
